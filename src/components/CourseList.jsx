@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import CourseItem from './CourseItem.jsx';
 import { initialCourses } from '../data/courses.js';
 
@@ -6,6 +6,8 @@ export default function CourseList() {
   // [제공] 초기 배열을 useState로 관리합니다.
   const [courses, setCourses] = useState(initialCourses);
   const [newName, setNewName] = useState('');
+  const [addError, setAddError] = useState('');
+  const nextId = useRef(Math.max(0, ...initialCourses.map(course => course.id)) + 1);
 
   // [제공] 삭제 기능: filter로 새 배열을 만들어 업데이트합니다.
   function handleDelete(id) {
@@ -13,10 +15,20 @@ export default function CourseList() {
     setCourses(previous => previous.filter(course => course.id !== id));
   }
 
-  // TODO 1 (필수): 과목 추가 기능을 구현하세요.
   function handleAdd(event) {
     event.preventDefault();
-    // TODO: 빈 입력 검사, 새 과목 객체 생성, setCourses 호출, 입력창 초기화
+    const name = newName.trim();
+
+    if (!name) {
+      setAddError('과목명을 입력하세요.');
+      return;
+    }
+
+    const newCourse = { id: nextId.current, name, category: '미분류', completed: false };
+    nextId.current += 1;
+    setCourses(previous => [...previous, newCourse]);
+    setNewName('');
+    setAddError('');
   }
 
   // TODO 2 (필수): 완료 상태 변경 기능을 구현하세요.
@@ -34,12 +46,23 @@ export default function CourseList() {
         <div className="stat"><span>진행 중</span><strong className="blue">{courses.length - doneCount}</strong></div>
       </section>
       <section className="panel">
-        <div className="panel-header"><h2>My Courses</h2><span className="small-note">{courses.length} courses</span></div>
-        <p className="todo">실습 과제: 아래 Add 버튼과 완료 체크박스의 기능을 직접 구현하세요.</p>
+        <div className="panel-header"><h2>과목 목록</h2><span className="small-note">{courses.length}개</span></div>
         <form className="add-form" onSubmit={handleAdd}>
-          <input className="input" value={newName} onChange={event => setNewName(event.target.value)} placeholder="새 과목명을 입력하세요" aria-label="새 과목명" />
-          <button className="btn primary" type="submit">+ Add Course</button>
+          <input
+            className="input"
+            value={newName}
+            onChange={event => {
+              setNewName(event.target.value);
+              setAddError('');
+            }}
+            placeholder="새 과목명을 입력하세요"
+            aria-label="새 과목명"
+            aria-invalid={Boolean(addError)}
+            aria-describedby={addError ? 'add-error' : undefined}
+          />
+          <button className="btn primary" type="submit">과목 추가</button>
         </form>
+        {addError && <p className="error" id="add-error" role="alert">{addError}</p>}
         <div className="list-head"><span>COURSE</span><span>CATEGORY</span><span>ACTIONS</span></div>
         {courses.length === 0 && <div className="empty">등록된 과목이 없습니다.</div>}
         {courses.map(course => (
