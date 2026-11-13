@@ -31,9 +31,10 @@ export default function CourseList() {
     setAddError('');
   }
 
-  // TODO 2 (필수): 완료 상태 변경 기능을 구현하세요.
   function handleToggle(id) {
-    // TODO: map과 spread(...)를 사용하여 해당 id의 completed를 반전
+    setCourses(previous => previous.map(course =>
+      course.id === id ? { ...course, completed: !course.completed } : course
+    ));
   }
 
   const doneCount = courses.filter(course => course.completed).length;
