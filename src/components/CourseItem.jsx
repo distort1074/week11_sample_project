@@ -23,10 +23,11 @@ export default function CourseItem({ course, onDelete, onToggle }) {
       <div className="actions">
         <button
           className="btn danger"
+          aria-label={`${course.name} 삭제`}
           type="button"
           onClick={() => onDelete(course.id)}
         >
-          Delete
+          삭제
         </button>
       </div>
     </div>

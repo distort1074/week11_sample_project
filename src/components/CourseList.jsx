@@ -7,6 +7,8 @@ export default function CourseList() {
   const [courses, setCourses] = useState(initialCourses);
   const [newName, setNewName] = useState('');
   const [addError, setAddError] = useState('');
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('all');
   const nextId = useRef(Math.max(0, ...initialCourses.map(course => course.id)) + 1);
 
   // [제공] 삭제 기능: filter로 새 배열을 만들어 업데이트합니다.
@@ -37,6 +39,11 @@ export default function CourseList() {
     ));
   }
 
+  const normalizedQuery = query.trim().toLowerCase();
+  const visibleCourses = courses.filter(course =>
+    course.name.toLowerCase().includes(normalizedQuery) &&
+    (status === 'all' || course.completed === (status === 'completed'))
+  );
   const doneCount = courses.filter(course => course.completed).length;
 
   return (
@@ -64,9 +71,33 @@ export default function CourseList() {
           <button className="btn primary" type="submit">과목 추가</button>
         </form>
         {addError && <p className="error" id="add-error" role="alert">{addError}</p>}
-        <div className="list-head"><span>COURSE</span><span>CATEGORY</span><span>ACTIONS</span></div>
-        {courses.length === 0 && <div className="empty">등록된 과목이 없습니다.</div>}
-        {courses.map(course => (
+        <div className="tools">
+          <input
+            className="input"
+            type="search"
+            value={query}
+            onChange={event => setQuery(event.target.value)}
+            placeholder="과목명 검색"
+            aria-label="과목명 검색"
+          />
+          <select
+            className="input select"
+            value={status}
+            onChange={event => setStatus(event.target.value)}
+            aria-label="완료 상태 필터"
+          >
+            <option value="all">전체 상태</option>
+            <option value="completed">완료</option>
+            <option value="active">진행 중</option>
+          </select>
+        </div>
+        <div className="list-head"><span>과목</span><span>분류</span><span>관리</span></div>
+        {visibleCourses.length === 0 && (
+          <div className="empty">
+            {courses.length === 0 ? '등록된 과목이 없습니다.' : '조건에 맞는 과목이 없습니다.'}
+          </div>
+        )}
+        {visibleCourses.map(course => (
           <CourseItem key={course.id} course={course} onDelete={handleDelete} onToggle={handleToggle} />
         ))}
       </section>
