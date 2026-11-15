@@ -54,44 +54,26 @@ export default function CourseList() {
         <div className="stat"><span>진행 중</span><strong className="blue">{courses.length - doneCount}</strong></div>
       </section>
       <section className="panel">
-        <div className="panel-header"><h2>과목 목록</h2><span className="small-note">{courses.length}개</span></div>
+        <div className="panel-header"><h2>My Courses</h2><span className="small-note">{courses.length} courses</span></div>
         <form className="add-form" onSubmit={handleAdd}>
-          <input
-            className="input"
-            value={newName}
-            onChange={event => {
-              setNewName(event.target.value);
-              setAddError('');
-            }}
-            placeholder="새 과목명을 입력하세요"
-            aria-label="새 과목명"
-            aria-invalid={Boolean(addError)}
-            aria-describedby={addError ? 'add-error' : undefined}
-          />
-          <button className="btn primary" type="submit">과목 추가</button>
+          <input className="input" value={newName} onChange={event => {
+            setNewName(event.target.value);
+            setAddError('');
+          }} placeholder="새 과목명을 입력하세요" aria-label="새 과목명"
+            aria-invalid={Boolean(addError)} aria-describedby={addError ? 'add-error' : undefined} />
+          <button className="btn primary" type="submit">+ Add Course</button>
         </form>
         {addError && <p className="error" id="add-error" role="alert">{addError}</p>}
         <div className="tools">
-          <input
-            className="input"
-            type="search"
-            value={query}
-            onChange={event => setQuery(event.target.value)}
-            placeholder="과목명 검색"
-            aria-label="과목명 검색"
-          />
-          <select
-            className="input select"
-            value={status}
-            onChange={event => setStatus(event.target.value)}
-            aria-label="완료 상태 필터"
-          >
+          <input className="input" type="search" value={query} onChange={event => setQuery(event.target.value)}
+            placeholder="과목명 검색" aria-label="과목명 검색" />
+          <select className="input select" value={status} onChange={event => setStatus(event.target.value)} aria-label="완료 상태 필터">
             <option value="all">전체 상태</option>
             <option value="completed">완료</option>
             <option value="active">진행 중</option>
           </select>
         </div>
-        <div className="list-head"><span>과목</span><span>분류</span><span>관리</span></div>
+        <div className="list-head"><span>COURSE</span><span>CATEGORY</span><span>ACTIONS</span></div>
         {visibleCourses.length === 0 && (
           <div className="empty">
             {courses.length === 0 ? '등록된 과목이 없습니다.' : '조건에 맞는 과목이 없습니다.'}
